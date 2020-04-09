@@ -1,4 +1,5 @@
 package qr.p5.indicium;
+
 import java.util.Scanner;
 
 public class Solution {
@@ -8,7 +9,7 @@ public class Solution {
 	int N, K;
 	int[][] square;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		in = new Scanner(System.in);
 		T = in.nextInt();
 		
@@ -23,7 +24,7 @@ public class Solution {
 	void solve(int c) {
 		readInput();
 		
-		boolean found = search(0, 0);
+		boolean found = search();
 		if(found) {
 			System.out.println("Case #" + c + ": POSSIBLE");
 			printSquare();
@@ -48,24 +49,31 @@ public class Solution {
 		square = new int[N][N];
 	}
 	
-	boolean search(int row, int col) {
+	boolean search() {
+		int row = -1, col = -1;
+		
+		find:
+		for(int i = 0; i < N; i++)
+			for(int j = 0; j < N; j++)
+				if(square[i][j] == 0) {
+					row = i;
+					col = j;
+					break find;
+				}
+		
+		if(row == -1 && col == -1)
+			return trace() == K;
+		
 		for(int i = 1; i <= N; i++) {
 			if(isSafe(row, col, i)) {
 				square[row][col] = i;
 				
-				if(col == N - 1) {
-					if(row == N - 1)
-						return trace() == K;
-					else if(search(row + 1, 0))
-						return true;
-				} else {
-					if(search(row, col + 1))
-						return true;
-				}
+				if(search())
+					return true;
+				else
+					square[row][col] = 0;
 			}
 		}
-		
-		square[row][col] = 0;
 		
 		return false;
 	}
